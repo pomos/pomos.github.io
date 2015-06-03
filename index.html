@@ -133,7 +133,6 @@
           self.minutes = 0;
           self.seconds = 0;
 
-          resetFavicon();
           self.stopTicking();
         };
 
@@ -151,6 +150,7 @@
 
         self.stopTicking = function() {
           self.updateContent();
+          resetFavicon();
           clearInterval(self.interval);
         }
 
