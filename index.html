@@ -180,13 +180,13 @@
         };
 
         self.finished = function() {
+          self.sendNotification('Finished ' + self.mode + '!', '');
+
           self.mode = '';
           self.minutes = 0;
           self.seconds = 0;
 
           self.stopTicking();
-
-          alert('Finished ' + self.mode + '!');
         };
 
         self.updateContent = function() {
