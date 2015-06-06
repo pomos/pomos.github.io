@@ -84,13 +84,13 @@
 
 		  function resetFavicon() {
 			     $("#favicon").attr('href', 'clock.png');
-      }
+      };
 
       function pad(n, width, z) {
         z = z || '0';
         n = n + '';
         return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
-      }
+      };
 
       var mainViewModel = function(window) {
         var self = this;
@@ -149,34 +149,38 @@
         };
 
         self.stopTicking = function() {
+          clearInterval(self.interval);
           self.updateContent();
           resetFavicon();
-          clearInterval(self.interval);
-        }
+
+        };
 
         self.tick = function() {
-          self.seconds -= 1;
+          if (self.mode != '') {
+            self.seconds -= 1;
 
-          if (self.seconds < 0) {
-            self.seconds = 59;
-            self.minutes -= 1;
+            if (self.seconds < 0) {
+              self.seconds = 59;
+              self.minutes -= 1;
+            }
+
+            if (self.minutes < 0) {
+              self.finished();
+              return;
+            }
+
+            if (self.minutes > 0) {
+              drawFavicon(self.minutes);
+            } else {
+              drawFavicon(self.seconds);
+            }
+
+            if (self.minutes == 10 && self.seconds == 59) {
+              self.sendNotification('Started ' + self.mode, 'Left: ' + self.minutes + ' minutes');
+            }
+
+            self.updateContent();
           }
-
-          if (self.minutes > 0) {
-            drawFavicon(self.minutes);
-          } else {
-            drawFavicon(self.seconds);
-          }
-
-          if (self.minutes < 0) {
-            self.finished();
-          }
-
-          if (self.minutes == 10 && self.seconds == 59) {
-            self.sendNotification('Started ' + self.mode, 'Left: ' + self.minutes + ' minutes');
-          }
-
-          self.updateContent();
         };
 
         self.finished = function() {
@@ -207,7 +211,7 @@
             Notification.requestPermission();
           else {
             var notification = new Notification(title, {
-              icon: 'clock.png',
+              icon: 'clock-mini.png',
               body: text,
             });
           }
