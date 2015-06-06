@@ -47,6 +47,17 @@
         margin-top: 50px;
         margin-bottom: 50px;
       }
+
+      #version {
+        text-align: right;
+        font-size: 8pt;
+        font-family: monospace;
+        color: silver;
+        position: absolute;
+        bottom: 5px;
+        width: 100%;
+        right: 5px;
+      }
     </style>
 
     <script type="text/javascript" src="jquery-2.1.4.min.js"></script>
@@ -240,6 +251,10 @@
           <li><button class="btn btn-info btn-lg" data-bind="click: stop">Stop</button></li>
         </ul>
       </buttons>
+    </div>
+
+    <div id="footer">
+      <div id="version">0.1.0</div>
     </div>
 
     <script type="text/javascript">
