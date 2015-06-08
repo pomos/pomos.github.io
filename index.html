@@ -8,6 +8,7 @@
 
     <title>Pomos</title>
 
+    <link href='http://fonts.googleapis.com/css?family=Cuprum' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="bootstrap.min.css">
 
     <style>
@@ -24,12 +25,27 @@
         height: 100%;
       }
 
+      #menu {
+        background-color: #31b0d5;
+        border-color: #269abc;
+
+        height: 36px;
+        vertical-align: middle;
+        font-family: 'Cuprum', sans-serif;
+      }
+
+      #menu div {
+        font-size: 19pt;
+        margin-left: 10px;
+        color: white;
+      }
+
       #timer {
         margin-top: 20px;
         text-align: center;
         font-size: 100pt;
         font-weight: bold;
-        height: 20px;
+        height: 30px;
         padding: 20px;
       }
 
@@ -272,6 +288,10 @@
 
   <body>
     <div id="main">
+      <div id="menu">
+        <div>POMOS</div>
+      </div>
+
       <div id="timer" data-bind="text: content"></div>
 
       <div id="buttons">
