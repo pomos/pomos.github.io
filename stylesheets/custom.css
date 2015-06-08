@@ -1,0 +1,72 @@
+html {
+  background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,0))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#00ffffff',GradientType=0 ); /* IE6-9 */
+
+  height: 100%;
+}
+
+#menu {
+  background-color: #31b0d5;
+  border-color: #269abc;
+
+  height: 38px;
+  vertical-align: middle;
+  font-family: 'Cuprum', sans-serif;
+}
+
+#menu div {
+  font-size: 19pt;
+  margin-left: 10px;
+  color: white;
+}
+
+#timer {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 100pt;
+  font-weight: bold;
+  height: 20px;
+  padding: 10px;
+}
+
+#buttons li {
+  display: inline-block;
+  margin: 10px;
+}
+
+#buttons ul {
+  list-style: none;
+}
+
+#buttons {
+  text-align: center;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+#footer {
+  text-align: right;
+  position: absolute;
+  bottom: 5px;
+  width: 100%;
+  right: 5px;
+  color: silver;
+  font-family: monospace;
+}
+
+.version {
+  font-size: 8pt;
+}
+
+#logs {
+  margin-top: 30px;
+}
+
+#statisticsDialog td {
+  text-align: center;
+}

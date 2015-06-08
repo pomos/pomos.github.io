@@ -9,311 +9,30 @@
     <title>Pomos</title>
 
     <link href='https://fonts.googleapis.com/css?family=Cuprum' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="bootstrap.min.css">
-
-    <style>
-
-      html {
-        background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%); /* FF3.6+ */
-        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,0))); /* Chrome,Safari4+ */
-        background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* Chrome10+,Safari5.1+ */
-        background: -o-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* Opera 11.10+ */
-        background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* IE10+ */
-        background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* W3C */
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#00ffffff',GradientType=0 ); /* IE6-9 */
-
-        height: 100%;
-      }
-
-      #menu {
-        background-color: #31b0d5;
-        border-color: #269abc;
-
-        height: 36px;
-        vertical-align: middle;
-        font-family: 'Cuprum', sans-serif;
-      }
-
-      #menu div {
-        font-size: 19pt;
-        margin-left: 10px;
-        color: white;
-      }
-
-      #timer {
-        margin-top: 20px;
-        text-align: center;
-        font-size: 100pt;
-        font-weight: bold;
-        height: 30px;
-        padding: 20px;
-      }
-
-      li {
-        display: inline-block;
-        margin: 10px;
-      }
-
-      ul {
-        list-style: none;
-      }
-
-      #buttons {
-        text-align: center;
-        margin-top: 50px;
-        margin-bottom: 50px;
-      }
-
-      #version {
-        text-align: right;
-        font-size: 8pt;
-        font-family: monospace;
-        color: silver;
-        position: absolute;
-        bottom: 5px;
-        width: 100%;
-        right: 5px;
-      }
-
-      #logs {
-        margin-top: 60px;
-      }
-    </style>
-
-    <script type="text/javascript" src="jquery-2.1.4.min.js"></script>
-    <script type="text/javascript" src="knockout-3.3.0.js"></script>
+    <link rel="stylesheet" href="stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" href="stylesheets/custom.css">
 
     <script type="text/javascript">
+      window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
+        alert("Ohhh crap! An error occured!\n\n" + errorMsg + "\n\non file\n" + url + "\n\non line " + lineNumber + "\n\nIf you are interested in fixing this issue go to pomos github page and add an issue with this message. Thanks!");
 
-      function drawFavicon(value) {
-  			var link = document.querySelector("link[rel~='icon']");
-
-  			if (!link) {
-  			  link = document.createElement("link");
-  			  link.setAttribute("rel", "shortcut icon");
-  			  document.head.appendChild(link);
-  			}
-
-  			var faviconUrl = link.href || window.location.origin + "/favicon.ico";
-
-  			function onImageLoaded() {
-  			  var canvas = document.createElement("canvas");
-  			  canvas.width = 16;
-  			  canvas.height = 16;
-  			  var context = canvas.getContext("2d");
-  			  context.font="12px Verdana";
-  			  context.fillText(value, 0, 12);
-  			  context.fill();
-  			  link.type = "image/x-icon";
-  			  link.href = canvas.toDataURL();
-  			};
-
-  			var img = document.createElement("img");
-  			img.addEventListener("load", onImageLoaded);
-  			img.src = faviconUrl;
-  		};
-
-		  function resetFavicon() {
-			     $("#favicon").attr('href', 'clock.png');
-      };
-
-      function pad(n, width, z) {
-        z = z || '0';
-        n = n + '';
-        return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
-      };
-
-      var mainViewModel = function(window) {
-        var self = this;
-
-        self.content = ko.observable('');
-        self.mode = '';
-        self.logs = ko.observableArray();
-
-        self.minutes = 0;
-        self.seconds = 0;
-
-        self.interval = null;
-
-        self.startPomodoro = function () {
-          uiHelper.showTimer(function() {
-            self.mode = 'pomodoro';
-            self.minutes = 25;
-            self.seconds = 0;
-
-            self.startTicking();
-
-            self.addLog('info', 'Started pomodoro')
-          });
-        };
-
-        self.startShortBreak = function() {
-          uiHelper.showTimer(function() {
-            self.mode = 'short';
-            self.minutes = 5;
-            self.seconds = 0;
-
-            self.startTicking();
-
-            self.addLog('info', 'Started short')
-          });
-        };
-
-        self.startLongBreak = function() {
-          uiHelper.showTimer(function() {
-            self.mode = 'long';
-            self.minutes = 15;
-            self.seconds = 0;
-
-            self.startTicking();
-
-            self.addLog('info', 'Started long')
-          });
-        };
-
-        self.stop = function() {
-          if (self.mode.length > 0) {
-            self.addLog('warning', 'Stopped ' + self.mode);
-          }
-
-          self.mode = '';
-          self.minutes = 0;
-          self.seconds = 0;
-
-          self.stopTicking();
-        };
-
-        self.startTicking = function() {
-          self.sendNotification('Started ' + self.mode, 'Left: ' + self.minutes + ' minutes');
-
-          self.updateContent();
-
-          if (self.interval != null) {
-            clearInterval(self.interval);
-          }
-
-          self.interval = setInterval(self.tick, 1000);
-        };
-
-        self.stopTicking = function() {
-          uiHelper.hideTimer();
-          clearInterval(self.interval);
-          self.updateContent();
-          resetFavicon();
-        };
-
-        self.tick = function() {
-          if (self.mode != '') {
-            self.seconds -= 1;
-
-            if (self.seconds < 0) {
-              self.seconds = 59;
-              self.minutes -= 1;
-            }
-
-            if (self.minutes < 0) {
-              self.finished();
-              return;
-            }
-
-            if (self.minutes > 0) {
-              drawFavicon(self.minutes);
-            } else {
-              drawFavicon(self.seconds);
-            }
-
-            if (self.minutes == 10 && self.seconds == 59) {
-              self.sendNotification('Pending ' + self.mode, 'Left: ' + self.minutes + ' minutes');
-            }
-
-            self.updateContent();
-          }
-        };
-
-        self.finished = function() {
-          self.sendNotification('Finished ' + self.mode + '!', '');
-          self.addLog('success', 'Finished ' + self.mode)
-
-          self.mode = '';
-          self.minutes = 0;
-          self.seconds = 0;
-
-          self.stopTicking();
-        };
-
-        self.updateContent = function() {
-          if (self.mode == '') {
-            self.content('');
-          } else {
-            self.content(pad(self.minutes, 2) + ':' + pad(self.seconds, 2));
-          }
-        };
-
-        self.sendNotification = function(title, text) {
-          if (!Notification) {
-            alert('Desktop notifications not available in your browser. Try Chromium.');
-            return;
-          }
-
-          if (Notification.permission !== "granted")
-            Notification.requestPermission();
-          else {
-            var notification = new Notification(title, {
-              icon: 'clock-mini.png',
-              body: text,
-            });
-          }
-        };
-
-        self.addLog = function(level, text) {
-          var currentdate = new Date();
-          var time = pad(currentdate.getHours(), 2) + ":"
-                + pad(currentdate.getMinutes(), 2) + ":"
-                + pad(currentdate.getSeconds(), 2);
-
-          self.logs.unshift({ 'level': level, 'text': text, 'time': time });
-
-          if (self.logs().length > 6) {
-            self.logs.pop();
-          }
-        };
-
-        self.showLogElement = function(elem) {
-          if (elem.nodeType === 1) {
-            $(elem).hide().slideDown();
-          }
-        };
-
-        self.hideLogElement = function(elem) {
-          if (elem.nodeType === 1) {
-            $(elem).slideUp(function() { $(elem).remove(); });
-          }
-        };
-
-        return self;
-      }();
-
-      var uiHelper = function() {
-        var self = this;
-
-        self.hideTimer = function(onFinished) {
-          $('#timer').animate({ height: '20px' }, 300, onFinished);
-        };
-
-        self.showTimer = function(onFinished) {
-          $('#timer').animate({ height: '180px' }, 300, onFinished);
-        };
-
-        return self;
-      }();
-
-      document.addEventListener('DOMContentLoaded', function () {
-        if (Notification.permission !== "granted")
-          Notification.requestPermission();
-      });
+        return false;
+      }
     </script>
 
+    <script type="text/javascript" src="scripts/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="scripts/knockout-3.3.0.js"></script>
+    <script type="text/javascript" src="scripts/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="scripts/pomos.js"></script>
+    <script type="text/javascript" src="scripts/pomos.storage.js"></script>
+    <script type="text/javascript" src="scripts/pomos.uihelper.js"></script>
+    <script type="text/javascript" src="scripts/pomos.stats.js"></script>
+    <script type="text/javascript" src="scripts/pomos.notify.js"></script>
+
     <script>
+      var version = "0.2.0";
+
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -328,9 +47,39 @@
 
   <body>
     <div id="main">
-      <div id="menu">
-        <div>POMOS</div>
-      </div>
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">
+              Pomos
+            </a>
+          </div>
+
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Menu <span class="caret"></span></a>
+
+                <ul class="dropdown-menu" role="menu">
+                  <li><a href="#" data-bind="click: clearLog">Clear log</a></li>
+                  <li><a href="#" data-toggle="modal" data-target="#statisticsDialog" onClick="statisticsViewModel.load()">Statistics</a></li>
+
+                  <li class="divider"></li>
+                  <li><a href="https://github.com/pomos/pomos.github.io" target="_blank">Issues</a></li>
+                  <li><a href="#" data-toggle="modal" data-target="#aboutDialog">About</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
 
       <div id="timer" data-bind="text: content"></div>
 
@@ -341,7 +90,7 @@
           <li><button class="btn btn-info btn-lg" data-bind="click: startLongBreak">Start long break</button></li>
           <li><button class="btn btn-info btn-lg" data-bind="click: stop">Stop</button></li>
         </ul>
-      </buttons>
+      </div>
 
       <div id="logs" data-bind="template: { foreach: logs, afterAdd: showLogElement, beforeRemove: hideLogElement }">
         <div class="alert" role="alert" data-bind="css: { 'alert-success': level == 'success', 'alert-info': level == 'info', 'alert-warning': level == 'warning' }">
@@ -350,12 +99,96 @@
       </div>
     </div>
 
+    <div class="modal fade" id="statisticsDialog" tabindex="-1" role="dialog" aria-labelledby="statisticsLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="statisticsLabel">Statistics</h4>
+          </div>
+          <div class="modal-body">
+            <table class="table table-bordered">
+              <tr>
+                  <th></th>
+                  <th>Started</th>
+                  <th>Finished</th>
+                  <th>Percent</th>
+              </tr>
+
+              <tr>
+                  <th>Pomos</th>
+                  <td><span data-bind="text: pomosStarted"></span></td>
+                  <td><span data-bind="text: pomosFinished"></span></td>
+                  <td><span data-bind="text: pomosPercent"></span></td>
+              </tr>
+
+              <tr>
+                  <th>Short</th>
+                  <td><span data-bind="text: shortStarted"></span></td>
+                  <td><span data-bind="text: shortFinished"></span></td>
+                  <td><span data-bind="text: shortPercent"></span></td>
+              </tr>
+
+              <tr>
+                  <th>Long</th>
+                  <td><span data-bind="text: longStarted"></span></td>
+                  <td><span data-bind="text: longFinished"></span></td>
+                  <td><span data-bind="text: longPercent"></span></td>
+              </tr>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="aboutDialog" tabindex="-1" role="dialog" aria-labelledby="aboutLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="aboutLabel">About</h4>
+          </div>
+          <div class="modal-body">
+            <div style="text-align:center">
+              <img src="clock-mini.png" alt="pomos" />
+              <p style="font-size: 15pt">Pomos</p>
+              <p class="version"></p>
+              <p>by <a href="https://github.com/yaras" target="_blank">yaras</a></p>
+            </div>
+
+            <p style="margin-top: 10px;"><strong>Pomos</strong> is a webapp for being productive. It is based on <a href="http://pomodorotechnique.com/">Pomodoro</a> technique. It is free and open source. If you found a bug or want to request a new feature feel free and go to <strong>Pomos</strong> <a href="https://github.com/pomos/pomos.github.io">github page</a>. </p>
+
+            <p style="margin-top: 20px;">
+              <strong>Disclaimer</strong>
+            </p>
+
+            <p><strong>Pomos</strong> is in its early stage of development it may be unstable or even stop working. Although I give my best to keep <strong>Pomos</strong> data safe I give you no guarantee it won't break from version to version.</p>
+
+            <p style="margin-top: 10px;">
+              <strong>Cookies</strong>
+            </p>
+
+            <p><strong>Pomos</strong> uses Google Analytics to gather statistics and it may store cookies on your machine. In some countries when a page stores a cookie on your machine it must be told, so I'm doing it. <a href="http://www.allaboutcookies.org/" target="_blank">Read more</a>.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="footer">
-      <div id="version">0.1.0</div>
+      <div class="version"></div>
     </div>
 
     <script type="text/javascript">
-      ko.applyBindings(mainViewModel);
+      ko.applyBindings(mainViewModel, document.getElementById('main'));
+      ko.applyBindings(statisticsViewModel, document.getElementById('statisticsDialog'));
+
+      $('.version').text(version);
     </script>
   </body>
 </html>
