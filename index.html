@@ -8,7 +8,7 @@
 
     <title>Pomos</title>
 
-    <link href='http://fonts.googleapis.com/css?family=Cuprum' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Cuprum' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="bootstrap.min.css">
 
     <style>
@@ -132,33 +132,33 @@
         self.interval = null;
 
         self.startPomodoro = function () {
-          uiHelper.showTimer();
+          uiHelper.showTimer(function() {
+            self.mode = 'pomodoro';
+            self.minutes = 25;
+            self.seconds = 0;
 
-          self.mode = 'pomodoro';
-          self.minutes = 25;
-          self.seconds = 0;
-
-          self.startTicking();
+            self.startTicking();
+          });
         };
 
         self.startShortBreak = function() {
-          uiHelper.showTimer();
+          uiHelper.showTimer(function() {
+            self.mode = 'short';
+            self.minutes = 5;
+            self.seconds = 0;
 
-          self.mode = 'short';
-          self.minutes = 5;
-          self.seconds = 0;
-
-          self.startTicking();
+            self.startTicking();
+          });
         };
 
         self.startLongBreak = function() {
-          uiHelper.showTimer();
+          uiHelper.showTimer(function() {
+            self.mode = 'long';
+            self.minutes = 15;
+            self.seconds = 0;
 
-          self.mode = 'long';
-          self.minutes = 15;
-          self.seconds = 0;
-
-          self.startTicking();
+            self.startTicking();
+          });
         };
 
         self.stop = function() {
@@ -256,12 +256,12 @@
       var uiHelper = function() {
         var self = this;
 
-        self.hideTimer = function() {
-          $('#timer').animate({ height: '20px' });
+        self.hideTimer = function(onFinished) {
+          $('#timer').animate({ height: '20px' }, 300, onFinished);
         };
 
-        self.showTimer = function() {
-          $('#timer').animate({ height: '180px' });
+        self.showTimer = function(onFinished) {
+          $('#timer').animate({ height: '180px' }, 300, onFinished);
         };
 
         return self;
