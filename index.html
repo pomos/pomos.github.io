@@ -74,6 +74,10 @@
         width: 100%;
         right: 5px;
       }
+
+      #logs {
+        margin-top: 60px;
+      }
     </style>
 
     <script type="text/javascript" src="jquery-2.1.4.min.js"></script>
@@ -123,8 +127,8 @@
         var self = this;
 
         self.content = ko.observable('');
-
-        self.mode = ko.observable('');
+        self.mode = '';
+        self.logs = ko.observableArray();
 
         self.minutes = 0;
         self.seconds = 0;
@@ -138,6 +142,8 @@
             self.seconds = 0;
 
             self.startTicking();
+
+            self.addLog('info', 'Started pomodoro')
           });
         };
 
@@ -148,6 +154,8 @@
             self.seconds = 0;
 
             self.startTicking();
+
+            self.addLog('info', 'Started short')
           });
         };
 
@@ -158,10 +166,16 @@
             self.seconds = 0;
 
             self.startTicking();
+
+            self.addLog('info', 'Started long')
           });
         };
 
         self.stop = function() {
+          if (self.mode.length > 0) {
+            self.addLog('warning', 'Stopped ' + self.mode);
+          }
+
           self.mode = '';
           self.minutes = 0;
           self.seconds = 0;
@@ -218,6 +232,7 @@
 
         self.finished = function() {
           self.sendNotification('Finished ' + self.mode + '!', '');
+          self.addLog('success', 'Finished ' + self.mode)
 
           self.mode = '';
           self.minutes = 0;
@@ -248,7 +263,32 @@
               body: text,
             });
           }
-        }
+        };
+
+        self.addLog = function(level, text) {
+          var currentdate = new Date();
+          var time = pad(currentdate.getHours(), 2) + ":"
+                + pad(currentdate.getMinutes(), 2) + ":"
+                + pad(currentdate.getSeconds(), 2);
+
+          self.logs.unshift({ 'level': level, 'text': text, 'time': time });
+
+          if (self.logs().length > 6) {
+            self.logs.pop();
+          }
+        };
+
+        self.showLogElement = function(elem) {
+          if (elem.nodeType === 1) {
+            $(elem).hide().slideDown();
+          }
+        };
+
+        self.hideLogElement = function(elem) {
+          if (elem.nodeType === 1) {
+            $(elem).slideUp(function() { $(elem).remove(); });
+          }
+        };
 
         return self;
       }();
@@ -302,6 +342,12 @@
           <li><button class="btn btn-info btn-lg" data-bind="click: stop">Stop</button></li>
         </ul>
       </buttons>
+
+      <div id="logs" data-bind="template: { foreach: logs, afterAdd: showLogElement, beforeRemove: hideLogElement }">
+        <div class="alert" role="alert" data-bind="css: { 'alert-success': level == 'success', 'alert-info': level == 'info', 'alert-warning': level == 'warning' }">
+          <span data-bind="text: text"></span> @ <span data-bind="text: time"></span>
+        </div>
+      </div>
     </div>
 
     <div id="footer">
