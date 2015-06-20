@@ -19,7 +19,7 @@ var notify = function() {
     }
 
     var data = {
-      icon: 'clock-mini.png',
+      icon: 'clock-mid.png',
       body: text,
     };
 
