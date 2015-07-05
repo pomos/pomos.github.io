@@ -140,7 +140,7 @@ var mainViewModel = function(window) {
         drawFavicon(self.seconds);
       }
 
-      if (self.minutes == 10 && self.seconds == 59) {
+      if (self.minutes == 10 && self.seconds == 0) {
         notify.sendNotification('Pending ' + self.mode, 'Left: ' + self.minutes + ' minutes');
       }
 
