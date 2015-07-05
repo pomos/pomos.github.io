@@ -3,7 +3,7 @@
   <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# object: http://ogp.me/ns/object# article: http://ogp.me/ns/article# profile: http://ogp.me/ns/profile#">
     <meta charset="utf-8">
 
-    <link id="favicon" rel="icon" type="image/png" href="clock.png">
+    <link id="favicon" rel="icon" type="image/png" href="icons/tomato-32.png">
 
     <title>Pomos</title>
 
@@ -59,6 +59,7 @@
               <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="#">
+              <img src="icons/tomato-32.png" alt="pomos" />
               Pomos
             </a>
           </div>
@@ -156,10 +157,14 @@
           </div>
           <div class="modal-body">
             <div style="text-align:center">
-              <img src="clock-mini.png" alt="pomos" />
-              <p style="font-size: 15pt">Pomos</p>
+
+              <p style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-size: 15pt; line-height: 1.42857143;
+  color: #333;"> <img src="icons/tomato-48.png" style="margin-top: -9px; margin-right: 5px;" alt="pomos" /> <span>Pomos</span></p>
               <p class="version"></p>
               <p>by <a href="https://github.com/yaras" target="_blank">yaras</a></p>
+
+              <a href="https://twitter.com/pomos_io" class="twitter-follow-button" data-show-count="false">Follow @pomos_io</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
             </div>
 
             <p style="margin-top: 10px;"><strong>Pomos</strong> is a webapp for being productive. It is based on <a href="http://pomodorotechnique.com/">Pomodoro</a> technique. It is free and open source. If you have found a bug or want to request a new feature feel free and go to <strong>Pomos</strong> <a href="https://github.com/pomos/pomos.github.io">github page</a>. </p>
@@ -225,6 +230,7 @@
 
             <ul>
               <li>Fixed 10 minutes notification (<a href="https://github.com/pomos/pomos.github.io/issues/3">#3</a>)</li>
+              <li>Pomos has a twitter account! Follow us now: <a target="_blank" href="https://twitter.com/pomos_io">pomos_io</a></li>
             </ul>
 
             <strong>v0.3.0</strong>
@@ -252,8 +258,8 @@
       ko.applyBindings(mainViewModel, document.getElementById('themesDialog'));
 
       $('.version').text(version);
-      mainViewModel.loadTheme();
-      mainViewModel.checkVersion();
+
+      mainViewModel.start();
     </script>
   </body>
 </html>

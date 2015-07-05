@@ -74,3 +74,8 @@ html {
 .wide {
   width: 100%;
 }
+
+.navbar-brand>img {
+  display: inline-block;
+  margin-top: -8px;
+}

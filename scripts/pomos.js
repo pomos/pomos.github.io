@@ -225,5 +225,16 @@ var mainViewModel = function(window) {
     }
   };
 
+  self.start = function() {
+    self.loadTheme();
+
+    if (storage.getSetting('start') == null) {
+      $('#aboutDialog').modal('show');
+      storage.setSetting('start', true);
+    } else {
+      self.checkVersion();
+    }
+  };
+
   return self;
 }();
