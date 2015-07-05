@@ -132,7 +132,8 @@ var storage = function() {
       settings = JSON.parse(settings);
     } else {
       settings = {
-        'theme': ''
+        'theme': '',
+        'version': ''
       }
     }
 

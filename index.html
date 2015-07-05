@@ -75,6 +75,7 @@
 
                   <li class="divider"></li>
                   <li><a href="https://github.com/pomos/pomos.github.io/issues" target="_blank">Issues</a></li>
+                  <li><a href="#" data-toggle="modal" data-target="#changelogDialog">Changelog</a></li>
                   <li><a href="#" data-toggle="modal" data-target="#aboutDialog">About</a></li>
                 </ul>
               </li>
@@ -211,6 +212,30 @@
       </div>
     </div>
 
+    <div class="modal fade" id="changelogDialog" tabindex="-1" role="dialog" aria-labelledby="changelogLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="aboutLabel">Changelog</h4>
+          </div>
+          <div class="modal-body">
+
+            <strong>v0.3.0</strong>
+
+            <ul>
+              <li>Added themes: modern and city</li>
+              <li>Added changelog dialog</li>
+            </ul>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="footer">
       <div class="version"></div>
     </div>
@@ -222,6 +247,7 @@
 
       $('.version').text(version);
       mainViewModel.loadTheme();
+      mainViewModel.checkVersion();
     </script>
   </body>
 </html>

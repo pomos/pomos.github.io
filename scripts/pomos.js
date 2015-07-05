@@ -216,5 +216,14 @@ var mainViewModel = function(window) {
     self.loadTheme();
   };
 
+  self.checkVersion = function() {
+    var storageVersion = storage.getSetting('version');
+
+    if (version != storageVersion) {
+      $('#changelogDialog').modal('show')
+      storage.setSetting('version', version);
+    }
+  };
+
   return self;
 }();
