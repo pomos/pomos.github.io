@@ -43,6 +43,8 @@ var mainViewModel = function(window) {
   self.mode = '';
   self.logs = ko.observableArray();
 
+  self.theme = ko.observable();
+
   self.minutes = 0;
   self.seconds = 0;
 
@@ -200,6 +202,18 @@ var mainViewModel = function(window) {
 
   self.clearLog = function() {
     self.logs.removeAll();
+  };
+
+  self.loadTheme = function() {
+    var v = storage.getSetting('theme');
+    self.theme(v);
+    console.log('Theme: ', v);
+    $('#customCss').attr('href', v);
+  };
+
+  self.saveTheme = function() {
+    storage.setSetting('theme', self.theme());
+    self.loadTheme();
   };
 
   return self;

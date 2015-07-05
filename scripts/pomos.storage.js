@@ -121,5 +121,42 @@ var storage = function() {
     return yyyy + pad(mm, 2) + pad(dd, 2);
   }
 
+  self.setSetting = function(name, value) {
+    if (!self.isEnabled()) {
+      return;
+    }
+
+    var settings = localStorage['settings'];
+
+    if (settings != null) {
+      settings = JSON.parse(settings);
+    } else {
+      settings = {
+        'theme': ''
+      }
+    }
+
+    settings[name] = value;
+
+    localStorage['settings'] = ko.toJSON(settings);
+
+    console.log('Saved settings', settings);
+  }
+
+  self.getSetting = function(name) {
+    if (!self.isEnabled()) {
+      return;
+    }
+
+    var settings = localStorage['settings'];
+
+    if (settings != null) {
+      settings = JSON.parse(settings);
+      return settings[name];
+    } else {
+      return null;
+    }
+  };
+
   return self;
 }();
