@@ -7,7 +7,7 @@ function drawFavicon(value) {
     document.head.appendChild(link);
   }
 
-  var faviconUrl = link.href || window.location.origin + "/favicon.ico";
+  var faviconUrl = link.href || window.location.origin + "/icons/tomato-32.ico";
 
   function onImageLoaded() {
     var canvas = document.createElement("canvas");
@@ -27,7 +27,7 @@ function drawFavicon(value) {
 };
 
 function resetFavicon() {
-     $("#favicon").attr('href', 'clock.png');
+     $("#favicon").attr('href', 'icons/tomato-32.png');
 };
 
 function pad(n, width, z) {

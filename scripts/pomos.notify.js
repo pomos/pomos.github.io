@@ -19,7 +19,7 @@ var notify = function() {
     }
 
     var data = {
-      icon: 'clock-mid.png',
+      icon: 'icons/tomato-48.png',
       body: text,
     };
 
