@@ -1,0 +1,17 @@
+body {
+  background-image: url('4874188049_486729e405_o.jpg');
+  background-size: cover;
+  height: 100%;
+}
+
+nav, #logs {
+  opacity: 0.75;
+}
+
+nav:hover {
+  opacity: 1;
+}
+
+#timer {
+  color: white;
+}
