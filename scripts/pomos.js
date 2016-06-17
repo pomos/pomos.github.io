@@ -211,7 +211,6 @@ var mainViewModel = function(window) {
   self.loadTheme = function() {
     var v = storage.getSetting('theme');
     self.theme(v);
-    console.log('Theme: ', v);
     $('#customCss').attr('href', v);
   };
 
