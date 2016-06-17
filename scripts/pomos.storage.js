@@ -57,16 +57,6 @@ var storage = function() {
     self.storeTodayStatistics(stat);
   };
 
-  self.storeEndShort = function() {
-    if (!self.isEnabled()) {
-      return;
-    }
-
-    var stat = self.getTodayStatistics();
-    stat['shortFinished'] += 1;
-    self.storeTodayStatistics(stat);
-  };
-
   self.storeStartLong = function() {
     if (!self.isEnabled()) {
       return;
@@ -74,16 +64,6 @@ var storage = function() {
 
     var stat = self.getTodayStatistics();
     stat['longStarted'] += 1;
-    self.storeTodayStatistics(stat);
-  };
-
-  self.storeEndLong = function() {
-    if (!self.isEnabled()) {
-      return;
-    }
-
-    var stat = self.getTodayStatistics();
-    stat['longFinished'] += 1;
     self.storeTodayStatistics(stat);
   };
 
