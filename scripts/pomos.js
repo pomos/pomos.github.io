@@ -96,6 +96,10 @@ var mainViewModel = function(window) {
       self.addLog('warning', 'Stopped ' + self.mode);
     }
 
+    if (self.mode == 'pomodoro') {
+      summaryViewModel.openSummaryDialog();
+    }
+
     self.mode = '';
     self.minutes = 0;
     self.seconds = 0;
@@ -157,11 +161,7 @@ var mainViewModel = function(window) {
     self.addLog('success', 'Finished ' + self.mode);
 
     if (self.mode == 'pomodoro') {
-      storage.storeEndPomodoro();
-    } else if (self.mode == 'short') {
-      storage.storeEndShort();
-    } else if (self.mode == 'long') {
-      storage.storeEndLong();
+      summaryViewModel.openSummaryDialog();
     }
 
     self.mode = '';
