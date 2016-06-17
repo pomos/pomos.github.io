@@ -79,3 +79,7 @@ html {
   display: inline-block;
   margin-top: -8px;
 }
+
+th {
+  text-align: center;
+}
