@@ -50,6 +50,8 @@ var mainViewModel = function(window) {
 
   self.interval = null;
 
+  self.isTicking = ko.observable(false);
+
   self.startPomodoro = function () {
     uiHelper.showTimer(function() {
       self.mode = 'pomodoro';
@@ -102,6 +104,7 @@ var mainViewModel = function(window) {
   };
 
   self.startTicking = function() {
+    self.isTicking(true);
     notify.sendNotification('Started ' + self.mode, 'Left: ' + self.minutes + ' minutes');
 
     self.updateContent();
@@ -114,6 +117,7 @@ var mainViewModel = function(window) {
   };
 
   self.stopTicking = function() {
+    self.isTicking(false);
     uiHelper.hideTimer();
     clearInterval(self.interval);
     self.updateContent();

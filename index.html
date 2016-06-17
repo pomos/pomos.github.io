@@ -89,10 +89,10 @@
 
       <div id="buttons">
         <ul>
-          <li><button class="btn btn-info btn-lg" data-bind="click: startPomodoro">Start pomodoro</button></li>
-          <li><button class="btn btn-info btn-lg" data-bind="click: startShortBreak">Start short break</button></li>
-          <li><button class="btn btn-info btn-lg" data-bind="click: startLongBreak">Start long break</button></li>
-          <li><button class="btn btn-info btn-lg" data-bind="click: stop">Stop</button></li>
+          <li><button class="btn btn-info btn-lg" data-bind="click: startPomodoro, enable: !isTicking()">Start pomodoro</button></li>
+          <li><button class="btn btn-info btn-lg" data-bind="click: startShortBreak, enable: !isTicking()">Start short break</button></li>
+          <li><button class="btn btn-info btn-lg" data-bind="click: startLongBreak, enable: !isTicking()">Start long break</button></li>
+          <li><button class="btn btn-info btn-lg" data-bind="click: stop, enable: isTicking">Stop</button></li>
         </ul>
       </div>
 
