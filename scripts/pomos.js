@@ -41,7 +41,6 @@ var mainViewModel = function(window) {
 
   self.content = ko.observable('');
   self.mode = '';
-  self.logs = ko.observableArray();
 
   self.theme = ko.observable();
 
@@ -59,8 +58,6 @@ var mainViewModel = function(window) {
       self.seconds = 0;
 
       self.startTicking();
-
-      self.addLog('info', 'Started pomodoro');
       storage.storeStartPomodoro();
     });
   };
@@ -72,8 +69,6 @@ var mainViewModel = function(window) {
       self.seconds = 0;
 
       self.startTicking();
-
-      self.addLog('info', 'Started short');
       storage.storeStartShort();
     });
   };
@@ -85,17 +80,11 @@ var mainViewModel = function(window) {
       self.seconds = 0;
 
       self.startTicking();
-
-      self.addLog('info', 'Started long');
       storage.storeStartLong();
     });
   };
 
   self.stop = function() {
-    if (self.mode.length > 0) {
-      self.addLog('warning', 'Stopped ' + self.mode);
-    }
-
     if (self.mode == 'pomodoro') {
       summaryViewModel.openSummaryDialog();
     }
@@ -158,7 +147,6 @@ var mainViewModel = function(window) {
 
   self.finished = function() {
     notify.sendNotification('Finished ' + self.mode + '!', '');
-    self.addLog('success', 'Finished ' + self.mode);
 
     if (self.mode == 'pomodoro') {
       summaryViewModel.openSummaryDialog();
@@ -179,19 +167,6 @@ var mainViewModel = function(window) {
     }
   };
 
-  self.addLog = function(level, text) {
-    var currentdate = new Date();
-    var time = pad(currentdate.getHours(), 2) + ":"
-          + pad(currentdate.getMinutes(), 2) + ":"
-          + pad(currentdate.getSeconds(), 2);
-
-    self.logs.unshift({ 'level': level, 'text': text, 'time': time });
-
-    if (self.logs().length > 3) {
-      self.logs.pop();
-    }
-  };
-
   self.showLogElement = function(elem) {
     if (elem.nodeType === 1) {
       $(elem).hide().slideDown();
@@ -202,10 +177,6 @@ var mainViewModel = function(window) {
     if (elem.nodeType === 1) {
       $(elem).slideUp(function() { $(elem).remove(); });
     }
-  };
-
-  self.clearLog = function() {
-    self.logs.removeAll();
   };
 
   self.loadTheme = function() {
