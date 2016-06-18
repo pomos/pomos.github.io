@@ -1,0 +1,17 @@
+body {
+  background-image: url('background.png');
+  background-size: cover;
+  height: 100%;
+}
+
+nav, #logs {
+  opacity: 0.75;
+}
+
+nav:hover {
+  opacity: 1;
+}
+
+#timer {
+  color: white;
+}
