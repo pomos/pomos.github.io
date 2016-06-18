@@ -30,20 +30,23 @@
     <script type="text/javascript" src="scripts/pomos.uihelper.js"></script>
     <script type="text/javascript" src="scripts/pomos.stats.js"></script>
     <script type="text/javascript" src="scripts/pomos.notify.js"></script>
+    <script type="text/javascript" src="scripts/pomos.summary.js"></script>
 
     <script>
-      var version = "0.3.3";
+      var version = "0.4.0";
+      var runGa = true;
 
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      if (runGa) {
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-      ga('create', 'UA-63829470-1', 'auto');
-      ga('send', 'pageview');
+        ga('create', 'UA-63829470-1', 'auto');
+        ga('send', 'pageview');
+      }
 
     </script>
-
   </head>
 
   <body>
@@ -70,7 +73,6 @@
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Menu <span class="caret"></span></a>
 
                 <ul class="dropdown-menu" role="menu">
-                  <li><a href="#" data-bind="click: clearLog">Clear log</a></li>
                   <li><a href="#" data-toggle="modal" data-target="#statisticsDialog" onClick="statisticsViewModel.load()">Statistics</a></li>
                   <li><a href="#" data-toggle="modal" data-target="#themesDialog" onClick="mainViewModel.loadTheme()">Themes</a></li>
 
@@ -89,17 +91,11 @@
 
       <div id="buttons">
         <ul>
-          <li><button class="btn btn-info btn-lg" data-bind="click: startPomodoro">Start pomodoro</button></li>
-          <li><button class="btn btn-info btn-lg" data-bind="click: startShortBreak">Start short break</button></li>
-          <li><button class="btn btn-info btn-lg" data-bind="click: startLongBreak">Start long break</button></li>
-          <li><button class="btn btn-info btn-lg" data-bind="click: stop">Stop</button></li>
+          <li><button class="btn btn-info btn-lg" data-bind="click: startPomodoro, enable: !isTicking()">Start pomodoro</button></li>
+          <li><button class="btn btn-info btn-lg" data-bind="click: startShortBreak, enable: !isTicking()">Start short break</button></li>
+          <li><button class="btn btn-info btn-lg" data-bind="click: startLongBreak, enable: !isTicking()">Start long break</button></li>
+          <li><button class="btn btn-info btn-lg" data-bind="click: stop, enable: isTicking">Stop</button></li>
         </ul>
-      </div>
-
-      <div id="logs" data-bind="template: { foreach: logs, afterAdd: showLogElement, beforeRemove: hideLogElement }">
-        <div class="alert" role="alert" data-bind="css: { 'alert-success': level == 'success', 'alert-info': level == 'info', 'alert-warning': level == 'warning' }">
-          <span data-bind="text: text"></span> @ <span data-bind="text: time"></span>
-        </div>
       </div>
     </div>
 
@@ -113,31 +109,38 @@
           <div class="modal-body">
             <table class="table table-bordered">
               <tr>
-                  <th></th>
-                  <th>Started</th>
-                  <th>Finished</th>
-                  <th>Percent</th>
+                  <th rowspan="2"></th>
+                  <th rowspan="2">Started</th>
+                  <th rowspan="2">Finished</th>
+                  <th colspan="2">Interrupted</th>
+
+                  <th rowspan="2">Percent</th>
+              </tr>
+
+              <tr>
+                <th>externally</th>
+                <th>internally</th>
               </tr>
 
               <tr>
                   <th>Pomos</th>
                   <td><span data-bind="text: pomosStarted"></span></td>
                   <td><span data-bind="text: pomosFinished"></span></td>
+                  <td><span data-bind="text: pomosExternalInterrupted"></span></td>
+                  <td><span data-bind="text: pomosInternalInterrupted"></span></td>
                   <td><span data-bind="text: pomosPercent"></span></td>
               </tr>
 
               <tr>
                   <th>Short</th>
                   <td><span data-bind="text: shortStarted"></span></td>
-                  <td><span data-bind="text: shortFinished"></span></td>
-                  <td><span data-bind="text: shortPercent"></span></td>
+                  <td colspan="4">-</td>
               </tr>
 
               <tr>
                   <th>Long</th>
                   <td><span data-bind="text: longStarted"></span></td>
-                  <td><span data-bind="text: longFinished"></span></td>
-                  <td><span data-bind="text: longPercent"></span></td>
+                  <td colspan="4">-</td>
               </tr>
             </table>
           </div>
@@ -226,6 +229,14 @@
           </div>
           <div class="modal-body">
 
+            <strong>v0.4.0</strong>
+
+            <ul>
+              <li>Removed logs below timer (anyone even noticed it?)</li>
+              <li>Disable buttons which are not applicable at certain state (pomodoro/break etc.)</li>
+              <li>Add summary dialog shown after each pomodoro allowing registration of interruptions</li>
+            </ul>
+
             <strong>v0.3.3</strong>
 
             <ul>
@@ -260,6 +271,31 @@
       </div>
     </div>
 
+    <div class="modal fade" id="summaryDialog" tabindex="-1" role="dialog" aria-labelledby="summaryLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="aboutLabel">Summary</h4>
+          </div>
+          <div class="modal-body">
+            <p>
+              Hey it seems you have finished a pomodoro, haven't you?
+            </p>
+
+            <p>The pomodoro should be marked as:</p>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-bind="click: onFinished">Finished</button>
+            <button type="button" class="btn btn-default" data-bind="click: onExternal">Externally interrupted</button>
+            <button type="button" class="btn btn-default" data-bind="click: onInternal">Internally interrupted</button>
+            <button type="button" class="btn btn-default" data-bind="click: onCancel">Cancelled</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="footer">
       <div class="version"></div>
     </div>
@@ -268,6 +304,7 @@
       ko.applyBindings(mainViewModel, document.getElementById('main'));
       ko.applyBindings(statisticsViewModel, document.getElementById('statisticsDialog'));
       ko.applyBindings(mainViewModel, document.getElementById('themesDialog'));
+      ko.applyBindings(summaryViewModel, document.getElementById('summaryDialog'));
 
       $('.version').text(version);
 

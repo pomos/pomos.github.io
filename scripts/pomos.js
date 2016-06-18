@@ -41,7 +41,6 @@ var mainViewModel = function(window) {
 
   self.content = ko.observable('');
   self.mode = '';
-  self.logs = ko.observableArray();
 
   self.theme = ko.observable();
 
@@ -50,6 +49,8 @@ var mainViewModel = function(window) {
 
   self.interval = null;
 
+  self.isTicking = ko.observable(false);
+
   self.startPomodoro = function () {
     uiHelper.showTimer(function() {
       self.mode = 'pomodoro';
@@ -57,8 +58,6 @@ var mainViewModel = function(window) {
       self.seconds = 0;
 
       self.startTicking();
-
-      self.addLog('info', 'Started pomodoro');
       storage.storeStartPomodoro();
     });
   };
@@ -70,8 +69,6 @@ var mainViewModel = function(window) {
       self.seconds = 0;
 
       self.startTicking();
-
-      self.addLog('info', 'Started short');
       storage.storeStartShort();
     });
   };
@@ -83,15 +80,13 @@ var mainViewModel = function(window) {
       self.seconds = 0;
 
       self.startTicking();
-
-      self.addLog('info', 'Started long');
       storage.storeStartLong();
     });
   };
 
   self.stop = function() {
-    if (self.mode.length > 0) {
-      self.addLog('warning', 'Stopped ' + self.mode);
+    if (self.mode == 'pomodoro') {
+      summaryViewModel.openSummaryDialog();
     }
 
     self.mode = '';
@@ -102,6 +97,7 @@ var mainViewModel = function(window) {
   };
 
   self.startTicking = function() {
+    self.isTicking(true);
     notify.sendNotification('Started ' + self.mode, 'Left: ' + self.minutes + ' minutes');
 
     self.updateContent();
@@ -114,6 +110,7 @@ var mainViewModel = function(window) {
   };
 
   self.stopTicking = function() {
+    self.isTicking(false);
     uiHelper.hideTimer();
     clearInterval(self.interval);
     self.updateContent();
@@ -150,14 +147,9 @@ var mainViewModel = function(window) {
 
   self.finished = function() {
     notify.sendNotification('Finished ' + self.mode + '!', '');
-    self.addLog('success', 'Finished ' + self.mode);
 
     if (self.mode == 'pomodoro') {
-      storage.storeEndPomodoro();
-    } else if (self.mode == 'short') {
-      storage.storeEndShort();
-    } else if (self.mode == 'long') {
-      storage.storeEndLong();
+      summaryViewModel.openSummaryDialog();
     }
 
     self.mode = '';
@@ -175,19 +167,6 @@ var mainViewModel = function(window) {
     }
   };
 
-  self.addLog = function(level, text) {
-    var currentdate = new Date();
-    var time = pad(currentdate.getHours(), 2) + ":"
-          + pad(currentdate.getMinutes(), 2) + ":"
-          + pad(currentdate.getSeconds(), 2);
-
-    self.logs.unshift({ 'level': level, 'text': text, 'time': time });
-
-    if (self.logs().length > 3) {
-      self.logs.pop();
-    }
-  };
-
   self.showLogElement = function(elem) {
     if (elem.nodeType === 1) {
       $(elem).hide().slideDown();
@@ -200,14 +179,9 @@ var mainViewModel = function(window) {
     }
   };
 
-  self.clearLog = function() {
-    self.logs.removeAll();
-  };
-
   self.loadTheme = function() {
     var v = storage.getSetting('theme');
     self.theme(v);
-    console.log('Theme: ', v);
     $('#customCss').attr('href', v);
   };
 

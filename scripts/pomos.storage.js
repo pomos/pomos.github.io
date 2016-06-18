@@ -27,6 +27,16 @@ var storage = function() {
     self.storeTodayStatistics(stat);
   };
 
+  self.cancelPomodoro = function() {
+    if (!self.isEnabled()) {
+      return;
+    }
+
+    var stat = self.getTodayStatistics();
+    stat['pomodorosStarted'] -= 1;
+    self.storeTodayStatistics(stat);
+  };
+
   self.storeEndPomodoro = function() {
     if (!self.isEnabled()) {
       return;
@@ -47,16 +57,6 @@ var storage = function() {
     self.storeTodayStatistics(stat);
   };
 
-  self.storeEndShort = function() {
-    if (!self.isEnabled()) {
-      return;
-    }
-
-    var stat = self.getTodayStatistics();
-    stat['shortFinished'] += 1;
-    self.storeTodayStatistics(stat);
-  };
-
   self.storeStartLong = function() {
     if (!self.isEnabled()) {
       return;
@@ -67,13 +67,23 @@ var storage = function() {
     self.storeTodayStatistics(stat);
   };
 
-  self.storeEndLong = function() {
+  self.storeInternalInterrupt = function() {
     if (!self.isEnabled()) {
       return;
     }
 
     var stat = self.getTodayStatistics();
-    stat['longFinished'] += 1;
+    stat['pomodorosInternalInterrupted'] += 1;
+    self.storeTodayStatistics(stat);
+  };
+
+  self.storeExternalInterrupt = function() {
+    if (!self.isEnabled()) {
+      return;
+    }
+
+    var stat = self.getTodayStatistics();
+    stat['pomodorosExternalInterrupted'] += 1;
     self.storeTodayStatistics(stat);
   };
 
@@ -104,8 +114,8 @@ var storage = function() {
         'shortStarted': 0,
         'longStarted': 0,
         'pomodorosFinished': 0,
-        'shortFinished': 0,
-        'longFinished': 0
+        'pomodorosInternalInterrupted': 0,
+        'pomodorosExternalInterrupted': 0
       };
     }
 
