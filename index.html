@@ -31,9 +31,10 @@
     <script type="text/javascript" src="scripts/pomos.stats.js"></script>
     <script type="text/javascript" src="scripts/pomos.notify.js"></script>
     <script type="text/javascript" src="scripts/pomos.summary.js"></script>
+    <script type="text/javascript" src="scripts/pomos.notes.js"></script>
 
     <script>
-      var version = "0.4.1";
+      var version = "0.5.0";
       var runGa = true;
 
       if (runGa) {
@@ -94,6 +95,7 @@
           <li><button class="btn btn-info btn-lg" data-bind="click: startPomodoro, enable: !isTicking()">Start pomodoro</button></li>
           <li><button class="btn btn-info btn-lg" data-bind="click: startShortBreak, enable: !isTicking()">Start short break</button></li>
           <li><button class="btn btn-info btn-lg" data-bind="click: startLongBreak, enable: !isTicking()">Start long break</button></li>
+          <li><button class="btn btn-info btn-lg" data-bind="click: addNote, enable: isTicking">Add note</button></li>
           <li><button class="btn btn-info btn-lg" data-bind="click: stop, enable: isTicking">Stop</button></li>
         </ul>
       </div>
@@ -279,10 +281,16 @@
           </div>
           <div class="modal-body">
 
+            <strong>v0.5.0</strong>
+
+            <ul>
+              <li>Added option to save notes</li>
+            </ul>
+
             <strong>v0.4.1</strong>
 
             <ul>
-              <li>Added w theme: material</li>
+              <li>Added new theme: material</li>
               <li>Moved themes list to main page</li>
             </ul>
 
@@ -333,14 +341,22 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="aboutLabel">Summary</h4>
+            <h4 class="modal-title" id="summaryLabel">Summary</h4>
           </div>
           <div class="modal-body">
             <p>
               Hey it seems you have finished a pomodoro, haven't you?
             </p>
 
-            <p>The pomodoro should be marked as:</p>
+						<div data-bind="visible: hasNotes">
+							<p>Also ... you saved some notes during last pomodoro:</p>
+
+							<p data-bind="html: notes"></p>
+						</div>
+
+						<hr />
+
+          	<p>The pomodoro should be marked as:</p>
 
           </div>
           <div class="modal-footer">
@@ -353,6 +369,28 @@
       </div>
     </div>
 
+		<div class="modal fade" id="notesDialog" tabindex="-1" role="dialog" aria-labelledby="notesLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="notesLabel">Notes</h4>
+					</div>
+					<div class="modal-body">
+						<p>
+							Add notes:
+						</p>
+
+						<textarea id="notesText" class="form-control" rows="5" data-bind="value: note"></textarea>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-bind="click: onSave">Save</button>
+						<button type="button" class="btn btn-default" data-bind="click: onCancel">Cancel</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
     <div id="footer">
       <div class="version"></div>
     </div>
@@ -361,7 +399,8 @@
       ko.applyBindings(mainViewModel, document.getElementById('main'));
       ko.applyBindings(statisticsViewModel, document.getElementById('statisticsDialog'));
       ko.applyBindings(mainViewModel, document.getElementById('themesDialog'));
-      ko.applyBindings(summaryViewModel, document.getElementById('summaryDialog'));
+			ko.applyBindings(summaryViewModel, document.getElementById('summaryDialog'));
+			ko.applyBindings(notesViewModel, document.getElementById('notesDialog'));
 
       $('.version').text(version);
 

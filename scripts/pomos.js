@@ -36,7 +36,7 @@ function pad(n, width, z) {
   return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
 };
 
-var mainViewModel = function(window) {
+function MainViewModel() {
   var self = this;
 
   self.content = ko.observable('');
@@ -116,6 +116,10 @@ var mainViewModel = function(window) {
     self.updateContent();
     resetFavicon();
   };
+
+	self.addNote = function() {
+		notesViewModel.openDialog();
+	};
 
   self.tick = function() {
     if (self.mode != '') {
@@ -211,4 +215,6 @@ var mainViewModel = function(window) {
   };
 
   return self;
-}();
+};
+
+var mainViewModel = new MainViewModel();

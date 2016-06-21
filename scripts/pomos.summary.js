@@ -3,6 +3,9 @@ var summaryViewModel = function() {
 
   self.closing = false;
 
+	self.hasNotes = ko.observable(false);
+	self.notes = ko.observable();
+
   $(function() {
     $('#summaryDialog').on('hide.bs.modal', function(e) {
       if (!self.closing) {
@@ -12,6 +15,17 @@ var summaryViewModel = function() {
   });
 
   self.openSummaryDialog = function() {
+
+		var notes = storage.getNotes();
+
+		if (notes == undefined || notes == null || notes.length == 0) {
+			self.hasNotes(false);
+			self.notes('');
+		} else {
+			self.hasNotes(true);
+			self.notes(notes.replace(/\n/g, "<br />"));
+		}
+
     self.closing = false;
     $('#summaryDialog').modal('show');
   };
