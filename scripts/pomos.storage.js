@@ -97,6 +97,30 @@ var storage = function() {
     localStorage['stat-' + today] = ko.toJSON(stat);
   };
 
+	self.addNote = function(note) {
+		if (!self.isEnabled()) {
+			alert('Local storage not enabled. Unable to save note');
+      return;
+    }
+
+		if (localStorage['note'] == null) {
+			localStorage['note'] = '- ' + note;
+		} else {
+			localStorage['note'] += '\n- ' + note;
+		}
+	};
+
+	self.getNotes = function() {
+		if (!self.isEnabled()) {
+			return '';
+    }
+
+		var note = localStorage['note'];
+		localStorage.removeItem('note');
+
+		return note;
+	};
+
   self.getTodayStatistics = function() {
     if (!self.isEnabled()) {
       return;

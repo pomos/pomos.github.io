@@ -117,6 +117,10 @@ function MainViewModel() {
     resetFavicon();
   };
 
+	self.addNote = function() {
+		notesViewModel.openDialog();
+	};
+
   self.tick = function() {
     if (self.mode != '') {
       self.seconds -= 1;
