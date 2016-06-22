@@ -1,4 +1,4 @@
-function drawFavicon(value) {
+function drawFavicon(value, color) {
   var link = document.querySelector("link[rel~='icon']");
 
   if (!link) {
@@ -15,6 +15,7 @@ function drawFavicon(value) {
     canvas.height = 16;
     var context = canvas.getContext("2d");
     context.font="12px Verdana";
+    context.fillStyle = color;
     context.fillText(value, 0, 12);
     context.fill();
     link.type = "image/x-icon";
@@ -136,9 +137,13 @@ function MainViewModel() {
       }
 
       if (self.minutes > 0) {
-        drawFavicon(self.minutes);
+        if (self.mode == 'pomodoro') {
+          drawFavicon(self.minutes, 'black');
+        } else {
+          drawFavicon(self.minutes, 'lime');
+        }
       } else {
-        drawFavicon(self.seconds);
+        drawFavicon(self.seconds, 'red');
       }
 
       if (self.minutes == 10 && self.seconds == 0) {
